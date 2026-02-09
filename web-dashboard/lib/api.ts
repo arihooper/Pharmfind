@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-//point to backend on port 3000
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 export const api = axios.create({
@@ -21,7 +20,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// auth api calls
 export const authAPI = {
   login: async (email: string, password: string) => {
     const response = await api.post('/api/auth/login', { email, password });
@@ -51,7 +49,6 @@ export const authAPI = {
   }
 };
 
-// medicines API calls
 export const medicinesAPI = {
   getAll: async () => {
     const response = await api.get('/api/medicines');

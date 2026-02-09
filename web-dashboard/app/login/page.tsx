@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authAPI } from '@/lib/api';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function LoginPage() {
   const [pharmacyId, setPharmacyId] = useState('');
@@ -44,7 +45,7 @@ export default function LoginPage() {
         <div className="flex justify-center mb-6">
           <div className="w-[104px] h-[104px] relative">
             <Image
-              src="/logo/asset/imgLog62390021.png"
+              src="/images/logo/asset/imgLog62390021.png"
               alt="PharmaFind Logo"
               width={104}
               height={104}
@@ -148,23 +149,25 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div className="mt-6 text-center">
-          <a 
-            href="#forgot" 
-            className="block text-[14px] font-normal text-[#2196f3] hover:underline mb-1"
-          >
-            Forgot your Pharmacy ID or Password?
-          </a>
-          <p className="text-[14px] font-normal">
-            <span className="text-black">Don't have an account? </span>
-            <a 
-              href="#signup" 
-              className="font-bold text-[#2196f3] hover:underline"
-            >
-              Signup here
-            </a>
-          </p>
-        </div>
+       
+
+<div className="mt-6 text-center">
+  <a 
+    href="#forgot" 
+    className="block text-[14px] font-normal text-[#2196f3] hover:underline mb-1"
+  >
+    Forgot your Pharmacy ID or Password?
+  </a>
+  <p className="text-[14px] font-normal">
+    <span className="text-black">Don't have an account? </span>
+    <Link 
+      href="/signup" 
+      className="font-bold text-[#2196f3] hover:underline"
+    >
+      Signup here
+    </Link>
+  </p>
+</div>
 
         <div className="mt-8 pt-6 border-t border-[#e0e0e0] text-center">
           <p className="text-sm text-[#666] mb-2">Demo Credentials:</p>
