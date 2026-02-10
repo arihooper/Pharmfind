@@ -23,7 +23,7 @@ export function Sidebar({ activeItem, onNavigate }: SidebarProps) {
   return (
     <div className="bg-[#1a3c2e] h-screen w-60 fixed left-0 top-0 flex flex-col">
       <div className="p-5">
-        <h1 className="text-white text-xl font-bold">💊 PharmaFind</h1>
+        <h1 className="text-[#ffffff] text-lg font-bold">💊 PharmaFind</h1>
       </div>
       
       <nav className="flex flex-col gap-2 px-5 pt-5">
