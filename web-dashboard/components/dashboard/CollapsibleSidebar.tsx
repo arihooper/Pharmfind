@@ -1,3 +1,4 @@
+// a expand and collaps
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -29,7 +30,7 @@ export default function CollapsibleSidebar({
   const pathname = usePathname();
   const sidebarRef = useRef<HTMLDivElement>(null);
 
-  // Load sidebar state from localStorage on mount
+  // load sidebar state from localStorage on mount
   useEffect(() => {
     const savedState = localStorage.getItem('sidebarCollapsed');
     if (savedState !== null) {
@@ -37,27 +38,26 @@ export default function CollapsibleSidebar({
     }
   }, []);
 
-  // Save sidebar state to localStorage when it changes
+  // save sidebar state to localStorage when it changes
   useEffect(() => {
     localStorage.setItem('sidebarCollapsed', isSidebarCollapsed.toString());
   }, [isSidebarCollapsed]);
 
-  // Handle hover on the entire sidebar
+  // handleing hover on the entire sidebar
   const handleSidebarMouseEnter = () => {
     setIsHovered(true);
     if (isSidebarCollapsed) {
-      // If collapsed, expand it when hovered
+      // if collapsed, expand it when hovered
       setIsSidebarCollapsed(false);
     }
   };
 
   const handleSidebarMouseLeave = () => {
     setIsHovered(false);
-    // Don't automatically collapse on mouse leave
-    // Only collapse when clicking the logo
+    // don't automatically collapse on mouse leave only collapse when clicking the logo
   };
 
-  // Toggle sidebar when clicking the logo
+  // toggle sidebar when clicking the logo
   const handleLogoClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent event bubbling
     setIsSidebarCollapsed(!isSidebarCollapsed);
@@ -80,7 +80,7 @@ export default function CollapsibleSidebar({
       onMouseLeave={handleSidebarMouseLeave}
       onClick={handleSidebarClick}
     >
-      {/* Logo - Click to toggle sidebar */}
+      {/* click on logo to toggle sidebar */}
       <div 
         className="flex items-center mb-8"
         onClick={handleLogoClick}
@@ -93,7 +93,7 @@ export default function CollapsibleSidebar({
         )}
       </div>
       
-      {/* Menu Items with gap */}
+      {/* menu Items with gap */}
       <div className="space-y-3">
         {menuItems.map((item) => {
           const isActive = pathname === item.href;

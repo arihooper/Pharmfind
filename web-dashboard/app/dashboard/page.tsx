@@ -6,7 +6,7 @@ import CollapsibleSidebar from '@/components/dashboard/CollapsibleSidebar';
 export default function DashboardPage() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   
-  // Activity data
+  // some activity data
   const activities = [
     { id: 1, text: "Added 50 units of Amoxicillin", timeAgo: "2 hours ago" },
     { id: 2, text: "Updated price of paracetamol upto 35", timeAgo: "4 hours ago" },
@@ -15,15 +15,15 @@ export default function DashboardPage() {
 
   return (
     <div className="flex min-h-screen bg-[#f9f9f9]">
-      {/* Sidebar */}
+      {/* sidebar com */}
       <CollapsibleSidebar />
       
-      {/* Main Content */}
+      {/* main content */}
       <div className={`flex-1 transition-all duration-300 ease-in-out ${
         isSidebarCollapsed ? 'ml-[70px]' : 'ml-[240px]'
       }`}>
         
-        {/* Header */}
+        {/* header */}
         <header className="bg-white border-b border-gray-200 h-[72px] flex items-center justify-between px-5">
           <h2 className="text-[#333] text-2xl font-bold">
             Welcome Waliin Pharmacy
@@ -42,10 +42,10 @@ export default function DashboardPage() {
           </div>
         </header>
         
-        {/* Main Area */}
+        {/* main area */}
         <main className="p-5 overflow-auto h-[calc(100vh-72px)]">
           
-          {/* Stats */}
+          {/* stats */}
           <div className="flex flex-wrap gap-8 mb-8">
             <div className="bg-white rounded-xl h-[120px] w-[280px] flex items-center justify-center shadow-sm">
               <p className="text-xl font-normal text-black">
@@ -72,7 +72,7 @@ export default function DashboardPage() {
             </div>
           </div>
           
-          {/* Recent Activity */}
+          {/* recent activity */}
           <section className="mb-8">
             <h3 className="text-[#333] text-2xl font-bold mb-4">
               Recent Activity
@@ -100,13 +100,13 @@ export default function DashboardPage() {
             </div>
           </section>
           
-          {/* Quick Actions */}
+          {/*  actions */}
           <section>
             <h3 className="text-black text-2xl font-bold mb-8">
               Quick Actions
             </h3>
             
-            {/* Quick Action Buttons */}
+            {/* quick action Buttons */}
             <div className="flex flex-wrap gap-[60px]">
               
               <div className="w-[200px] h-[52px]">

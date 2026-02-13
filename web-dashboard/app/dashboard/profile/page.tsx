@@ -61,7 +61,7 @@ export default function ProfilePage() {
                 </label>
                 <input
                   type="tel"
-                  defaultValue="+251 911 234 567"
+                  defaultValue="+251 9000000"
                   className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -71,7 +71,7 @@ export default function ProfilePage() {
                   Address
                 </label>
                 <textarea
-                  defaultValue="Bole Road, Addis Ababa, Ethiopia"
+                  defaultValue="04 , dambi dollo oromiya, ethiopia"
                   rows={3}
                   className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />

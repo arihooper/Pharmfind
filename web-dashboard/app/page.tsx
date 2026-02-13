@@ -1,3 +1,4 @@
+// it's home when it run
 import Link from 'next/link';
 
 export default function HomePage() {
