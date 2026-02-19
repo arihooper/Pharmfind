@@ -22,7 +22,7 @@ export default function CollapsibleSidebar({
     { id: 'inventory', label: 'Inventory', href: '/dashboard/inventory', icon: '📦' },
     { id: 'profile', label: 'Profile', href: '/dashboard/profile', icon: '👤' },
     { id: 'reports', label: 'Reports', href: '#', icon: '📈' },
-    { id: 'settings', label: 'Settings', href: '#', icon: '⚙️' },
+    { id: 'settings', label: 'Settings', href: '/dashboard/settings', icon: '⚙️' },
   ]
 }: CollapsibleSidebarProps) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);

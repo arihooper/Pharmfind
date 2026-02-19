@@ -88,7 +88,7 @@ export default function ProfilePage() {
         
         {/* Header */}
         <header className="h-[80px] px-10 flex items-center justify-between bg-white/50 backdrop-blur-md sticky top-0 z-50">
-          <h2 className="text-2xl font-black text-slate-800 tracking-tight">Settings</h2>
+          <h2 className="text-2xl font-black text-slate-800 tracking-tight">Profile</h2>
           <div className="flex items-center gap-6">
             <button className="p-2 rounded-full hover:bg-white transition-colors relative">
               <Bell size={22} className="text-slate-600" />
