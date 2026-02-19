@@ -40,8 +40,8 @@ export default function LoginPage() {
 
   return (
     <div className="bg-white min-h-screen flex items-center justify-center p-4">
-      <div className="bg-white border border-[rgba(224,224,224,0.01)] rounded-[12px] shadow-[0px_4px_20px_0px_rgba(0,0,0,0.1)] w-[400px] p-12">
-        {/* Logo */}
+      {/* add responsive container */}
+      <div className="bg-white border border-[rgba(224,224,224,0.01)] rounded-[12px] shadow-[0px_4px_20px_0px_rgba(0,0,0,0.1)] w-full max-w-[400px] p-6 md:p-12">
         <div className="flex justify-center mb-6">
           <div className="w-[104px] h-[104px] relative">
             <Image
@@ -49,7 +49,7 @@ export default function LoginPage() {
               alt="PharmaFind Logo"
               width={104}
               height={104}
-              className="object-cover"
+              className="object-contain"
               priority
             />
           </div>
@@ -68,9 +68,8 @@ export default function LoginPage() {
           </div>
         )}
 
-        <form onSubmit={handleLogin}>
-          {/* padding to prevent overflow */}
-          <div className="mb-6">
+        <form onSubmit={handleLogin} className="space-y-6">
+          <div>
             <label className="block text-[14px] font-medium text-[#333] mb-2">
               Pharmacy ID:
             </label>
@@ -87,17 +86,10 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* added gap between email and password label */}
-          <div className="mb-2"></div>
-
-          
-          <div className="mb-6">
-            <div className="flex justify-between items-center mb-2">
-              <label className="text-[14px] font-medium text-[#333]">
-                Password:
-              </label>
-              
-            </div>
+          <div>
+            <label className="block text-[14px] font-medium text-[#333] mb-2">
+              Password:
+            </label>
             <div className="bg-[#f5f5f5] rounded-[8px] h-[48px] w-full overflow-hidden">
               <input
                 type={showPassword ? "text" : "password"}
@@ -111,8 +103,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* remember me */}
-          <div className="flex items-center mb-10 mt-4">
+          <div className="flex items-center mt-4">
             <input
               type="checkbox"
               id="remember"
@@ -121,10 +112,7 @@ export default function LoginPage() {
               className="w-[16px] h-[16px] border border-[#999] cursor-pointer"
               disabled={loading}
             />
-            <label 
-              htmlFor="remember"
-              className="ml-3 text-[14px] font-medium text-black cursor-pointer"
-            >
+            <label htmlFor="remember" className="ml-3 text-[14px] font-medium text-black cursor-pointer">
               Remember me
             </label>
           </div>
@@ -132,49 +120,31 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#4caf50] hover:bg-[#45a049] transition-colors rounded-[50px] h-[52px] flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full bg-[#4caf50] hover:bg-[#45a049] transition-colors rounded-[50px] h-[52px] flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed px-4"
           >
             {loading ? (
               <div className="flex items-center gap-2">
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-[16px] font-bold text-white">
-                  Logging in...
-                </span>
+                <span className="text-[16px] font-bold text-white">Logging in...</span>
               </div>
             ) : (
-              <span className="text-[24px] font-bold text-[#ffffff]">
+              <span className="text-[20px] md:text-[24px] font-bold text-[#ffffff]">
                 Login
               </span>
             )}
           </button>
         </form>
 
-       
-
-<div className="mt-6 text-center">
-  <a 
-    href="#forgot" 
-    className="block text-[14px] font-normal text-[#2196f3] hover:underline mb-1"
-  >
-    Forgot your Pharmacy ID or Password?
-  </a>
-  <p className="text-[14px] font-normal">
-    <span className="text-black">Don't have an account? </span>
-    <Link 
-      href="/signup" 
-      className="font-bold text-[#2196f3] hover:underline"
-    >
-      Signup here
-    </Link>
-  </p>
-</div>
-
-        <div className="mt-8 pt-6 border-t border-[#e0e0e0] text-center">
-          <p className="text-sm text-[#666] mb-2">Demo Credentials:</p>
-          <div className="text-xs text-[#888]">
-            <p>Pharmacy ID: <span className="font-medium">greenpharmacy</span></p>
-            <p>Password: <span className="font-medium">pharmacy123</span></p>
-          </div>
+        <div className="mt-6 text-center space-y-2">
+          <a href="#forgot" className="block text-[14px] text-[#2196f3] hover:underline">
+            Forgot ID or Password?
+          </a>
+          <p className="text-[14px]">
+            Don't have an account?{' '}
+            <Link href="/signup" className="font-bold text-[#2196f3] hover:underline">
+              Signup here
+            </Link>
+          </p>
         </div>
       </div>
     </div>
