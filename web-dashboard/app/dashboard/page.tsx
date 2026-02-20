@@ -1,22 +1,42 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CollapsibleSidebar from '@/components/dashboard/CollapsibleSidebar';
 
 export default function DashboardPage() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [mounted, setMounted] = useState(false); // adding mounted state
   
-  // some activity data
+  // initial state from localStorage after mount
+  useEffect(() => {
+    setMounted(true);
+    const savedState = localStorage.getItem('sidebarCollapsed');
+    if (savedState !== null) {
+      setIsSidebarCollapsed(savedState === 'true');
+    }
+  }, []);
+  
+  // some activity data that will be seen frist
   const activities = [
     { id: 1, text: "Added 50 units of Amoxicillin", timeAgo: "2 hours ago" },
     { id: 2, text: "Updated price of paracetamol upto 35", timeAgo: "4 hours ago" },
     { id: 3, text: "Received new Vitamin C", timeAgo: "Yesterday" },
   ];
 
+  // handle sidebar state changes from the sidebar component
+  const handleSidebarStateChange = (collapsed: boolean) => {
+    setIsSidebarCollapsed(collapsed);
+  };
+
+  // it shouldn't render until mounted to prevent hydration mismatch
+  if (!mounted) {
+    return null; // or a loading skeleton
+  }
+
   return (
     <div className="flex min-h-screen bg-[#f9f9f9]">
-      {/* sidebar com */}
-      <CollapsibleSidebar />
+      {/* sidebar component with callback */}
+      <CollapsibleSidebar onStateChange={handleSidebarStateChange} />
       
       {/* main content */}
       <div className={`flex-1 transition-all duration-300 ease-in-out ${
@@ -24,7 +44,7 @@ export default function DashboardPage() {
       }`}>
         
         {/* header */}
-        <header className="bg-white border-b border-gray-200 h-[72px] flex items-center justify-between px-5">
+        <header className="bg-white border-b border-gray-200 h-[72px] flex items-center justify-between px-5 sticky top-0 z-20">
           <h2 className="text-[#333] text-2xl font-bold">
             Welcome Waliin Pharmacy
           </h2>
@@ -42,30 +62,30 @@ export default function DashboardPage() {
           </div>
         </header>
         
-        {/* main area */}
+        {/* main area - scrollable */}
         <main className="p-5 overflow-auto h-[calc(100vh-72px)]">
           
           {/* stats */}
           <div className="flex flex-wrap gap-8 mb-8">
-            <div className="bg-white rounded-xl h-[120px] w-[280px] flex items-center justify-center shadow-sm">
+            <div className="bg-white rounded-xl h-[120px] w-[280px] flex items-center justify-center shadow-sm hover:shadow-md transition-shadow">
               <p className="text-xl font-normal text-black">
                 📦 156 Total Stock
               </p>
             </div>
 
-            <div className="bg-white rounded-xl h-[120px] w-[280px] flex items-center justify-center shadow-sm">
+            <div className="bg-white rounded-xl h-[120px] w-[280px] flex items-center justify-center shadow-sm hover:shadow-md transition-shadow">
               <p className="text-xl font-normal text-[#ff9800]">
                 ⚠️ 12 Low Stock
               </p>
             </div>
 
-            <div className="bg-white rounded-xl h-[120px] w-[280px] flex items-center justify-center shadow-sm">
+            <div className="bg-white rounded-xl h-[120px] w-[280px] flex items-center justify-center shadow-sm hover:shadow-md transition-shadow">
               <p className="text-xl font-normal text-[#f44336]">
                 ❌ 3 Out of Stock
               </p>
             </div>
 
-            <div className="bg-white rounded-xl h-[120px] w-[280px] flex items-center justify-center shadow-sm">
+            <div className="bg-white rounded-xl h-[120px] w-[280px] flex items-center justify-center shadow-sm hover:shadow-md transition-shadow">
               <p className="text-xl font-normal text-black">
                 📋 Today's order
               </p>
@@ -100,54 +120,56 @@ export default function DashboardPage() {
             </div>
           </section>
           
-          {/*  actions */}
+          {/* quick actions */}
           <section>
             <h3 className="text-black text-2xl font-bold mb-8">
               Quick Actions
             </h3>
             
-            {/* quick action Buttons */}
+            {/* quick action buttons */}
             <div className="flex flex-wrap gap-[60px]">
               
               <div className="w-[200px] h-[52px]">
                 <button 
                   className="bg-[#4caf50] text-white font-bold rounded-[10px] 
-                             hover:bg-[#45a049] transition-colors 
+                             hover:bg-[#45a049] transition-all 
                              flex items-center justify-center gap-2 
-                             w-full h-full hover:scale-105 duration-200"
+                             w-full h-full hover:scale-105 duration-200 shadow-sm hover:shadow-md"
                 >
                   <span className="text-[24px] leading-none">➕</span>
-                  <span className="text-[16px] text-[#ffffff]">Add Medicine</span>
+                  <span className="text-[16px] text-white">Add Medicine</span>
                 </button>
               </div>
 
               <div className="w-[200px] h-[52px]">
                 <button 
                   className="bg-[#2196f3] text-white font-bold rounded-[10px] 
-                             hover:bg-[#1976d2] transition-colors 
+                             hover:bg-[#1976d2] transition-all 
                              flex items-center justify-center gap-2 
-                             w-full h-full hover:scale-105 duration-200"
+                             w-full h-full hover:scale-105 duration-200 shadow-sm hover:shadow-md"
                 >
                   <span className="text-[24px] leading-none">📊</span>
-                  <span className="text-[16px] text-[#ffffff]">View Reports</span>
+                  <span className="text-[16px] text-white">View Reports</span>
                 </button>
               </div>
 
               <div className="w-[200px] h-[52px]">
                 <button 
                   className="bg-[#2196f3] text-white font-bold rounded-[10px] 
-                             hover:bg-[#1976d2] transition-colors 
+                             hover:bg-[#1976d2] transition-all 
                              flex items-center justify-center gap-2 
-                             w-full h-full hover:scale-105 duration-200"
+                             w-full h-full hover:scale-105 duration-200 shadow-sm hover:shadow-md"
                 >
                   <span className="text-[24px] leading-none">👥</span>
-                  <span className="text-[16px] text-[#ffffff]">Manage Staff</span>
+                  <span className="text-[16px] text-white">Manage Staff</span>
                 </button>
               </div>
 
             </div>
           </section>
 
+          {/* bottom padding for scroll */}
+          <div className="h-5" />
         </main>
       </div>
     </div>
