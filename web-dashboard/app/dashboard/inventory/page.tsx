@@ -10,9 +10,9 @@ import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';
 import { Dropdown } from 'primereact/dropdown';
 import { Toast } from 'primereact/toast';
-import { DataTable } from 'primereact/datatable'; // for type only
+import { DataTable } from 'primereact/datatable';
 
-// medicine type may be i can add another
+// medicine type
 interface Medicine {
   id: number | null;
   name: string;
@@ -32,7 +32,7 @@ const categoryOptions = [
 const statusOptions = ['In Stock', 'Low Stock', 'Out of Stock'];
 const countryOptions = ['USA', 'Germany', 'France', 'India', 'UK'];
 
-// Initial empty medicine (id null means new)
+// Initial empty medicine
 const emptyMedicine: Medicine = {
   id: null,
   name: '',
@@ -46,32 +46,37 @@ const emptyMedicine: Medicine = {
 
 export default function InventoryPage() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [medicines, setMedicines] = useState<Medicine[]>([
-  { id: 1, name: 'Amoxicillin 500mg', category: 'Antibiotics', brand: 'Amoxil', country: 'Germany', price: 250, stock: 25, status: 'In Stock' },
-  { id: 2, name: 'Paracetamol 500mg', category: 'Pain Relief', brand: 'Tylenol', country: 'USA', price: 300, stock: 0, status: 'Out of Stock' },
-  { id: 3, name: 'Clopidogrel', category: 'Antiplatelet Agent', brand: 'Plavix', country: 'France', price: 437, stock: 5, status: 'Low Stock' },
-  { id: 4, name: 'Apixaban', category: 'Blood thinner', brand: 'Eliquis', country: 'USA', price: 200, stock: 160, status: 'In Stock' },
-  { id: 5, name: 'Omeprazole', category: 'Gastrointestinal', brand: 'OmepraCare', country: 'USA', price: 500, stock: 200, status: 'In Stock' },
-  { id: 6, name: 'Insulin', category: 'Hormonal Agent', brand: 'Basalog', country: 'India', price: 120, stock: 500, status: 'In Stock' },
-  { id: 7, name: 'Metformin', category: 'Antidiabetic', brand: 'Glucophage', country: 'Germany', price: 300, stock: 125, status: 'In Stock' },
-  { id: 8, name: 'Lamivudine', category: '2-Drug Single-Tablet Regimen', brand: 'Dovato', country: 'UK', price: 4, stock: 1500, status: 'Low Stock' },
-]);
+    { id: 1, name: 'Amoxicillin 500mg', category: 'Antibiotics', brand: 'Amoxil', country: 'Germany', price: 250, stock: 25, status: 'In Stock' },
+    { id: 2, name: 'Paracetamol 500mg', category: 'Pain Relief', brand: 'Tylenol', country: 'USA', price: 300, stock: 0, status: 'Out of Stock' },
+    { id: 3, name: 'Clopidogrel', category: 'Antiplatelet Agent', brand: 'Plavix', country: 'France', price: 437, stock: 5, status: 'Low Stock' },
+    { id: 4, name: 'Apixaban', category: 'Blood thinner', brand: 'Eliquis', country: 'USA', price: 200, stock: 160, status: 'In Stock' },
+    { id: 5, name: 'Omeprazole', category: 'Gastrointestinal', brand: 'OmepraCare', country: 'USA', price: 500, stock: 200, status: 'In Stock' },
+    { id: 6, name: 'Insulin', category: 'Hormonal Agent', brand: 'Basalog', country: 'India', price: 120, stock: 500, status: 'In Stock' },
+    { id: 7, name: 'Metformin', category: 'Antidiabetic', brand: 'Glucophage', country: 'Germany', price: 300, stock: 125, status: 'In Stock' },
+    { id: 8, name: 'Lamivudine', category: '2-Drug Single-Tablet Regimen', brand: 'Dovato', country: 'UK', price: 4, stock: 1500, status: 'Low Stock' },
+  ]);
 
-  // dialog state
   const [productDialog, setProductDialog] = useState(false);
   const [product, setProduct] = useState<Medicine>(emptyMedicine);
   const [submitted, setSubmitted] = useState(false);
-
-  // delete confirm dialog
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [productToDelete, setProductToDelete] = useState<Medicine | null>(null);
-
-  // toast for notif
   const toast = useRef<Toast>(null);
-
-  // reference to DataTable to export
   const dt = useRef<DataTable<any>>(null);
+
+  // Check if mobile on mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // sync sidebar
   useEffect(() => {
@@ -85,20 +90,17 @@ export default function InventoryPage() {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  // Open new med dialog
   const openNew = () => {
     setProduct(emptyMedicine);
     setSubmitted(false);
     setProductDialog(true);
   };
 
-  // hide dialog
   const hideDialog = () => {
     setSubmitted(false);
     setProductDialog(false);
   };
 
-  // save med (create or update)
   const saveProduct = () => {
     setSubmitted(true);
 
@@ -107,12 +109,10 @@ export default function InventoryPage() {
       let _product = { ...product };
 
       if (_product.id) {
-        // update
         const index = findIndexById(_product.id);
         _medicines[index] = _product;
         toast.current?.show({ severity: 'success', summary: 'Successful', detail: 'Medicine Updated', life: 3000 });
       } else {
-        // create new
         _product.id = createId();
         _medicines.push(_product);
         toast.current?.show({ severity: 'success', summary: 'Successful', detail: 'Medicine Created', life: 3000 });
@@ -124,19 +124,16 @@ export default function InventoryPage() {
     }
   };
 
-  // edit med
   const editProduct = (productData: Medicine) => {
     setProduct({ ...productData });
     setProductDialog(true);
   };
 
-  // confirm delete
   const confirmDeleteProduct = (productData: Medicine) => {
     setProductToDelete(productData);
     setDeleteDialog(true);
   };
 
-  // delete med
   const deleteProduct = () => {
     if (!productToDelete) return;
     let _medicines = medicines.filter((val) => val.id !== productToDelete.id);
@@ -146,22 +143,18 @@ export default function InventoryPage() {
     toast.current?.show({ severity: 'success', summary: 'Successful', detail: 'Medicine Deleted', life: 3000 });
   };
 
-  // find index by id
   const findIndexById = (id: number) => {
     return medicines.findIndex((item) => item.id === id);
   };
 
-  // generate random id for simple demo)
   const createId = (): number => {
     return Math.floor(Math.random() * 10000) + 1;
   };
 
-  // exporting into CSV
   const exportCSV = () => {
     dt.current?.exportCSV();
   };
 
-  // dialog footer buttons
   const productDialogFooter = (
     <>
       <Button label="Cancel" icon="pi pi-times" outlined onClick={hideDialog} />
@@ -182,67 +175,93 @@ export default function InventoryPage() {
       <CollapsibleSidebar />
 
       <div className={`flex-1 transition-all duration-300 ease-in-out ${
-        isSidebarCollapsed ? 'ml-[90px]' : 'ml-[260px]'
+        !isMobile && (isSidebarCollapsed ? 'ml-[90px]' : 'ml-[260px]')
       }`}>
         
-        <header className="bg-white border-b border-gray-200 h-[80px] flex items-center px-8">
-          <h2 className="text-[#333] text-3xl font-bold">Inventory Management</h2>
+        <header className="bg-white border-b border-gray-200 h-[80px] flex items-center px-4 md:px-8 sticky top-0 z-10">
+          <h2 className="text-[#333] text-2xl md:text-3xl font-bold">Inventory Management</h2>
         </header>
 
-        <main className="p-8">
+        <main className="p-4 md:p-8 overflow-y-auto max-h-[calc(100vh-80px)]">
           
-          {/* search + filter + add + export */}
-          <div className="flex items-center gap-6 mb-6">
-            {/* for search med */}
-            <div className="bg-white h-[48px] w-[600px] flex items-center px-5 shadow-md rounded-[20px] border-none">
+          {/* search + filter + add + export - responsive */}
+          <div className="flex flex-col lg:flex-row gap-4 mb-6">
+            
+            {/* search input - full width on mobile */}
+            <div className="bg-white h-[48px] w-full lg:w-[600px] flex items-center px-5 shadow-md rounded-[20px] border-none">
               <span className="text-gray-400 mr-3"><Search size={22} /></span>
               <input
                 type="text"
                 placeholder="Search medicines..."
-                className="bg-transparent flex-1 font-medium text-[16px] text-[#333] outline-none placeholder:text-[#aaa] border-none focus:ring-0"
+                className="bg-transparent flex-1 font-medium text-[14px] md:text-[16px] text-[#333] outline-none placeholder:text-[#aaa] border-none focus:ring-0"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
 
-            {/* filter */}
-            <button className="bg-white h-[48px] w-[100px] rounded-[12px] font-semibold text-[#666] text-[15px] border border-gray-300 hover:bg-gray-50 transition-colors shadow-sm flex items-center justify-center gap-1">
-              Filter
-              <ChevronDown size={18} className="text-gray-500" />
-            </button>
+            {/* buttons row - wrap on mobile */}
+            <div className="flex flex-wrap items-center gap-3">
+              
+              {/* filter button */}
+              <button className="bg-white h-[48px] px-4 rounded-[12px] font-semibold text-[#666] text-[14px] md:text-[15px] border border-gray-300 hover:bg-gray-50 transition-colors shadow-sm flex items-center justify-center gap-1">
+                Filter
+                <ChevronDown size={16} className="text-gray-500" />
+              </button>
 
-            {/* add medicine(med) */}
-            <button
-              onClick={openNew}
-              className="bg-[#4caf50] h-[52px] w-[159px] rounded-[25px] text-white font-bold hover:bg-[#45a049] transition-all flex items-center justify-center gap-2 shadow-md hover:scale-105"
-            >
-              <Plus size={22} />
-              <span className="text-[15px] text-[#ffffff]">Add Medicine</span>
-            </button>
+              {/* add medicine button */}
+              <button
+                onClick={openNew}
+                className="bg-[#4caf50] h-[48px] px-4 md:px-6 rounded-[25px] text-white font-bold hover:bg-[#45a049] transition-all flex items-center justify-center gap-2 shadow-md hover:scale-105"
+              >
+                <Plus size={20} />
+                <span className="text-[14px] text-white whitespace-nowrap">Add Medicine</span>
+              </button>
 
-            {/* export */}
-            <button
-              onClick={exportCSV}
-              className="bg-[#fff3e0] text-[#ff9800] h-[48px] px-6 rounded-[12px] font-bold text-sm border border-[#ffe0b2] hover:bg-orange-100 transition-colors shadow-sm flex items-center gap-2 ml-auto"
-            >
-              <i className="pi pi-upload" style={{ fontSize: '1rem' }}></i>
-              Export CSV
-            </button>
+              {/* export button */}
+              <button
+                onClick={exportCSV}
+                className="bg-[#fff3e0] text-[#ff9800] h-[48px] px-4 rounded-[12px] font-bold text-sm border border-[#ffe0b2] hover:bg-orange-100 transition-colors shadow-sm flex items-center gap-2"
+              >
+                <i className="pi pi-upload" style={{ fontSize: '1rem' }}></i>
+                <span className="hidden sm:inline">Export CSV</span>
+              </button>
+            </div>
           </div>
 
-          {/* PrimeReact Table for the med */}
-          <MedicineTable
-            ref={dt}
-            products={medicines}
-            onEdit={editProduct}
-            onDelete={confirmDeleteProduct}
-            globalFilter={searchQuery}
-          />
+          {/* Scrollable Table Container - Fixed for mobile */}
+          <div className="relative">
+            {/* Scroll hint for mobile */}
+            {isMobile && (
+              <div className="mb-2 text-right text-xs text-gray-400">
+                ← Swipe to scroll →
+              </div>
+            )}
+            
+            {/* Horizontal scroll container */}
+            <div className="w-full overflow-x-auto pb-4">
+              <div className="min-w-[1000px] md:min-w-full">
+                <MedicineTable
+                  ref={dt}
+                  products={medicines}
+                  onEdit={editProduct}
+                  onDelete={confirmDeleteProduct}
+                  globalFilter={searchQuery}
+                />
+              </div>
+            </div>
+
+            {/* Scroll indicator bar for mobile */}
+            {isMobile && (
+              <div className="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
+                <div className="h-full bg-[#4caf50] rounded-full animate-pulse" style={{ width: '30%' }} />
+              </div>
+            )}
+          </div>
 
           {/* add/edit Dialog */}
           <Dialog
             visible={productDialog}
-            style={{ width: '450px' }}
+            style={{ width: isMobile ? '95%' : '450px' }}
             header={product.id ? 'Edit Medicine' : 'Add Medicine'}
             modal
             className="p-fluid"
@@ -329,21 +348,24 @@ export default function InventoryPage() {
           {/* Confirm delete Dialog */}
           <Dialog
             visible={deleteDialog}
-            style={{ width: '450px' }}
+            style={{ width: isMobile ? '95%' : '450px' }}
             header="Confirm"
             modal
             footer={deleteDialogFooter}
             onHide={() => setDeleteDialog(false)}
           >
-            <div className="confirmation-content">
-              <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
+            <div className="confirmation-content flex items-center gap-3">
+              <i className="pi pi-exclamation-triangle" style={{ fontSize: '2rem', color: '#ff9800' }} />
               {productToDelete && (
-                <span>
+                <span className="text-sm md:text-base">
                   Are you sure you want to delete <b>{productToDelete.name}</b>?
                 </span>
               )}
             </div>
           </Dialog>
+
+          {/* bottom padding for scroll */}
+          <div className="h-4 md:h-6" />
         </main>
       </div>
     </div>

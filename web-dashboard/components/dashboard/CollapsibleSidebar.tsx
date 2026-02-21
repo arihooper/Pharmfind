@@ -15,6 +15,8 @@ interface MenuItem {
 interface CollapsibleSidebarProps {
   menuItems?: MenuItem[];
   onStateChange?: (isCollapsed: boolean) => void;
+  isMobileMenuOpen?: boolean;        // new prop to control mobile menu from parent
+  onMobileMenuToggle?: () => void;   // new prop to notify parent of toggle
 }
 
 export default function CollapsibleSidebar({ 
@@ -25,15 +27,22 @@ export default function CollapsibleSidebar({
     { id: 'reports', label: 'Reports', href: '#', icon: '📈' },
     { id: 'settings', label: 'Settings', href: '/dashboard/settings', icon: '⚙️' },
   ],
-  onStateChange
+  onStateChange,
+  isMobileMenuOpen: externalMobileMenuOpen,  // accept from parent
+  onMobileMenuToggle                         // callback to parent
 }: CollapsibleSidebarProps) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [internalMobileMenuOpen, setInternalMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const sidebarRef = useRef<HTMLDivElement>(null);
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // use external control if provided, otherwise use internal state
+  const isMobileMenuOpen = externalMobileMenuOpen !== undefined 
+    ? externalMobileMenuOpen 
+    : internalMobileMenuOpen;
 
   // used to check if mobile on mount and resize
   useEffect(() => {
@@ -46,7 +55,7 @@ export default function CollapsibleSidebar({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // loading sidebar state from localStorage on mount
+  // loading sidebar state from localstorage on mount
   useEffect(() => {
     const savedState = localStorage.getItem('sidebarCollapsed');
     if (savedState !== null) {
@@ -101,26 +110,39 @@ export default function CollapsibleSidebar({
     }
     
     if (isMobile) {
-      setIsMobileMenuOpen(false);
+      // use external toggle if provided, otherwise internal
+      if (onMobileMenuToggle) {
+        onMobileMenuToggle();
+      } else {
+        setInternalMobileMenuOpen(false);
+      }
     }
   };
 
-  // Mobile menu toggle
+  // mobile menu toggle - use external if provided
   const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
+    if (onMobileMenuToggle) {
+      onMobileMenuToggle();
+    } else {
+      setInternalMobileMenuOpen(!internalMobileMenuOpen);
+    }
   };
 
   // close mobile menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (isMobile && isMobileMenuOpen && sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
-        setIsMobileMenuOpen(false);
+        if (onMobileMenuToggle) {
+          onMobileMenuToggle();
+        } else {
+          setInternalMobileMenuOpen(false);
+        }
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isMobile, isMobileMenuOpen]);
+  }, [isMobile, isMobileMenuOpen, onMobileMenuToggle]);
 
   // don't render until mounted to prevent hydration mismatch
   if (!mounted) {
@@ -131,8 +153,8 @@ export default function CollapsibleSidebar({
 
   return (
     <>
-      {/* mobile menu button for on mobile scree */}
-      {isMobile && (
+      {/* mobile menu button - only show if no external control or when using internal */}
+      {isMobile && !onMobileMenuToggle && (
         <button
           onClick={toggleMobileMenu}
           className="fixed top-4 left-4 z-50 p-3 bg-[#1a3c2e] text-white rounded-lg shadow-lg hover:bg-[#2a4c3e] transition-colors active:bg-[#2a4c3e]"
@@ -141,15 +163,15 @@ export default function CollapsibleSidebar({
         </button>
       )}
 
-      {/* mobile Overlay */}
+      {/* mobile overlay */}
       {isMobile && isMobileMenuOpen && (
         <div 
           className="fixed inset-0 bg-black/50 z-40"
-          onClick={() => setIsMobileMenuOpen(false)}
+          onClick={toggleMobileMenu}
         />
       )}
 
-      {/* Sidebar */}
+      {/* sidebar */}
       <div 
         ref={sidebarRef}
         className={`
@@ -178,7 +200,7 @@ export default function CollapsibleSidebar({
         onMouseEnter={handleSidebarMouseEnter}
         onMouseLeave={handleSidebarMouseLeave}
       >
-        {/* Logo */}
+        {/* logo */}
         <div 
           className="flex items-center mb-8 cursor-pointer hover:opacity-80 active:opacity-80"
           onClick={handleLogoClick}
@@ -196,7 +218,7 @@ export default function CollapsibleSidebar({
           )}
         </div>
         
-        {/* Items on menu */}
+        {/* items on menu */}
         <div className="space-y-3">
           {menuItems.map((item) => {
             const isActive = pathname === item.href;
